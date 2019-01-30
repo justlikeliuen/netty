@@ -105,6 +105,9 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
 
     private ChannelFuture succeededFuture;
 
+    private AbstractChannelHandlerContext nextChannelRead;
+    private AbstractChannelHandlerContext prevWrite;
+
     // Lazily instantiated tasks used to trigger events to a handler with different executor.
     // There is no need to make this volatile as at worse it will just create a few more instances then needed.
     private Tasks invokeTasks;
@@ -116,6 +119,15 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
         this.name = ObjectUtil.checkNotNull(name, "name");
         this.pipeline = pipeline;
         this.executionMask = mask(handlerClass);
+    }
+
+    final void calculateCachedContexts() {
+        if (next != null) {
+            nextChannelRead = findContextInbound(MASK_CHANNEL_READ);
+        }
+        if (prev != null) {
+            prevWrite = findContextOutbound(MASK_WRITE);
+        }
     }
 
     /**
@@ -417,7 +429,7 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
     }
 
     private void findAndInvokeChannelRead(Object msg) {
-        findContextInbound(MASK_CHANNEL_READ).invokeChannelRead(msg);
+        nextChannelRead.invokeChannelRead(msg);
     }
 
     final void invokeChannelRead(Object msg) {
@@ -815,8 +827,8 @@ abstract class AbstractChannelHandlerContext extends DefaultAttributeMap
 
         EventExecutor executor = executor();
         if (executor.inEventLoop()) {
-            final AbstractChannelHandlerContext next = findContextOutbound(flush ?
-                    (MASK_WRITE | MASK_FLUSH) : MASK_WRITE);
+            final AbstractChannelHandlerContext next = flush ?
+                    findContextOutbound(MASK_WRITE | MASK_FLUSH) : prevWrite;
             if (flush) {
                 next.invokeWriteAndFlush(msg, promise);
             } else {
