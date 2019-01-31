@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * A {@link ThreadFactory} implementation with a simple naming rule.
+ * DefaultThreadFactory 将作为netty默认的线程工厂，newThread 生产出 FastThreadLocalThread
  */
 public class DefaultThreadFactory implements ThreadFactory {
 
@@ -123,4 +124,5 @@ public class DefaultThreadFactory implements ThreadFactory {
     protected Thread newThread(Runnable r, String name) {
         return new FastThreadLocalThread(threadGroup, r, name);
     }
+
 }

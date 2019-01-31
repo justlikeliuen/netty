@@ -26,6 +26,8 @@ import java.util.Set;
  * A special variant of {@link ThreadLocal} that yields higher access performance when accessed from a
  * {@link FastThreadLocalThread}.
  * <p>
+ *  KP 主要表现在使用数组，而不是使用hash table，这样数组的随机获取效率就要大于hash取值，尤其是在未命中再hash的时候。因此针对
+ *  KP 需要大量get set ThreadLocal的情况下，使用这个FastThreadLocal<V>效率提升明细
  * Internally, a {@link FastThreadLocal} uses a constant index in an array, instead of using hash code and hash table,
  * to look for a variable.  Although seemingly very subtle, it yields slight performance advantage over using a hash
  * table, and it is useful when accessed frequently.
@@ -43,6 +45,10 @@ import java.util.Set;
  */
 public class FastThreadLocal<V> {
 
+    /**
+     * KP object数组io.netty.util.internal.UnpaddedInternalThreadLocalMap#indexedVariables 中存放待移除的
+     * KP FastThreadLocal对象了。   variablesToRemoveIndex这个位置的object类型应该是Set<FastThreadLocal<V>>
+     */
     private static final int variablesToRemoveIndex = InternalThreadLocalMap.nextVariableIndex();
 
     /**
@@ -124,6 +130,9 @@ public class FastThreadLocal<V> {
 
     private final int index;
 
+    /**
+     * KP 这个index就是这个ThreadLocal变量的数组下标索引
+     */
     public FastThreadLocal() {
         index = InternalThreadLocalMap.nextVariableIndex();
     }

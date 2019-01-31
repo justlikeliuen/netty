@@ -1,0 +1,10 @@
+@startuml
+start
+:new FastThreadLocal();
+:index=InternalThreadLocalMap.nextVariableIndex();
+note right
+    nextVariableIndex()将调用
+    UnpaddedInternalThreadLocalMap.nextIndex 生成一个AtomicInteger
+end note
+end
+@enduml

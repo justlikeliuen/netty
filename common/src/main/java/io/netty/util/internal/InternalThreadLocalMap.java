@@ -46,6 +46,9 @@ public final class InternalThreadLocalMap extends UnpaddedInternalThreadLocalMap
 
     public static final Object UNSET = new Object();
 
+    /**
+     *  KP 使用FastThreadLocal变量的index来刷新位图着色
+     */
     private BitSet cleanerFlags;
 
     static {
@@ -341,6 +344,7 @@ public final class InternalThreadLocalMap extends UnpaddedInternalThreadLocalMap
         return cleanerFlags != null && cleanerFlags.get(index);
     }
 
+    // KP 使用位图存储index
     public void setCleanerFlag(int index) {
         if (cleanerFlags == null) {
             cleanerFlags = new BitSet();

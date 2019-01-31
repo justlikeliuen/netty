@@ -24,6 +24,9 @@ final class FastThreadLocalRunnable implements Runnable {
         this.runnable = ObjectUtil.checkNotNull(runnable, "runnable");
     }
 
+    /**
+     * KP 重写run() 方法保证线程结束时释放所有的ThreadLocal变量
+     */
     @Override
     public void run() {
         try {
