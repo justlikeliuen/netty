@@ -16,6 +16,7 @@
 
 package io.netty.util.concurrent;
 
+import io.netty.util.internal.InternalThreadLocalMap;
 import io.netty.util.internal.ObjectCleaner;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -23,6 +24,7 @@ import org.junit.Test;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.IntStream;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -210,5 +212,21 @@ public class FastThreadLocalTest {
         protected void onRemoval(String value) throws Exception {
             onRemovalCalled.set(value);
         }
+    }
+
+    /**
+     * 流程debug代码
+     */
+    @Test
+    public void testFlow(){
+        new FastThreadLocalThread(() -> {
+            IntStream.range(1,100).forEach(i -> {
+                new FastThreadLocal<>();
+            });
+            FastThreadLocal<String> ftl = new FastThreadLocal<>();
+            ftl.set("haha");
+            InternalThreadLocalMap itlm = InternalThreadLocalMap.get();
+            System.out.println(1);
+        }).start();
     }
 }

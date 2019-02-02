@@ -17,6 +17,7 @@
 package io.netty.util.internal;
 
 import io.netty.util.concurrent.FastThreadLocal;
+import io.netty.util.concurrent.FastThreadLocalThread;
 
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
@@ -24,6 +25,7 @@ import java.nio.charset.CharsetEncoder;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 /**
  * The internal data structure that stores the thread-local variables for Netty and all {@link FastThreadLocal}s.
@@ -61,4 +63,6 @@ class UnpaddedInternalThreadLocalMap {
     UnpaddedInternalThreadLocalMap(Object[] indexedVariables) {
         this.indexedVariables = indexedVariables;
     }
+
+
 }

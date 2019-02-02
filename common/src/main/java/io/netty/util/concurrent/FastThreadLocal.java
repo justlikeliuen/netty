@@ -48,6 +48,7 @@ public class FastThreadLocal<V> {
     /**
      * KP object数组io.netty.util.internal.UnpaddedInternalThreadLocalMap#indexedVariables 中存放待移除的
      * KP FastThreadLocal对象了。   variablesToRemoveIndex这个位置的object类型应该是Set<FastThreadLocal<V>>
+     * KP 类变量，直接初始化值就是0。因此indexedVariables数组0的位置就是用来存放要删除的
      */
     private static final int variablesToRemoveIndex = InternalThreadLocalMap.nextVariableIndex();
 
